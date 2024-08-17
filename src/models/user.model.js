@@ -19,13 +19,27 @@ const userSchema = new Schema({
         enum: ["user", "admin"],
         default: "user"
     },
-    profilePicture: String,
+    profilePicture: {
+        type: String
+    },
     createdAt:{ 
         type: Date, 
-        default: Date.now },  
+        default: Date.now 
+    },  
     updatedAt:{ 
         type: Date, 
-        default: Date.now },
+        default: Date.now 
+    },
+    cars:[{
+        carId: String,
+        status: String,
+        batteryLevel: Number,
+        location:{
+            latitude: Number,
+            longitude: Number
+        }
+    }]
+
 })
 
 export default mongoose.model("User", userSchema)
