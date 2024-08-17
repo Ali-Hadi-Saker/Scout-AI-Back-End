@@ -53,6 +53,10 @@ const userSchema = new Schema({
             uploadedAt:{
                 type: Date,
                 default: Date.now
+            },
+            objectDetectionResults:{
+                objectName: String,
+                confidence: Number
             }
         }]
     }]
