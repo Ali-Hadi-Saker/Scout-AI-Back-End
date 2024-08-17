@@ -34,10 +34,19 @@ const userSchema = new Schema({
         carId: String,
         status: String,
         batteryLevel: Number,
+        cameraFeed: String,
+        createdAt:{
+            type: Date,
+            default: Date.now,
+        },
+        updatedAt:{
+            type: Date,
+            default: Date.now
+        },
         location:{
             latitude: Number,
             longitude: Number
-        }
+        },
     }]
 
 })
