@@ -47,6 +47,14 @@ const userSchema = new Schema({
             latitude: Number,
             longitude: Number
         },
+        images:[{
+            imageId: String,
+            imageURL: String,
+            uploadedAt:{
+                type: Date,
+                default: Date.now
+            }
+        }]
     }]
 
 })
