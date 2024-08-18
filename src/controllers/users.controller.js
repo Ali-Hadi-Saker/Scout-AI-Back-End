@@ -1,5 +1,6 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 export const getUsers = async (req, res) => {
     try {
@@ -44,7 +45,7 @@ export const loginUser = async(req, res)=>{
         if(!user){
             return res.status(400).send({message: "User not found"})
         }
-        
+
         const isMatch = await bcrypt.compare(password, user.password)
         if(!isMatch){
             return res.status(400).send({error: "Invalid credentials"})
