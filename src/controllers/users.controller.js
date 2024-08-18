@@ -35,3 +35,22 @@ export const createUser = async (req, res)=>{
         return res.status(500).send({message: error.message})
     }
 }
+
+export const loginUser = async(req, res)=>{
+    try {
+        const {email, password} = req.body
+
+        const user = await User.findOne({email})
+        if(!user){
+            return res.status(400).send({message: "User not found"})
+        }
+        
+        const isMatch = await bcrypt.compare(password, user.password)
+        if(!isMatch){
+            return res.status(400).send({error: "Invalid credentials"})
+        }
+
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+}
