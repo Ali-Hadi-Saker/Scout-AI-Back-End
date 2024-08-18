@@ -1,4 +1,5 @@
 import User from "../models/user.model.js"
+import bcrypt from "bcrypt"
 
 export const getUsers = async(res)=>{
     const users = User.find()
@@ -16,6 +17,16 @@ export const createUser = async (req, res)=>{
         if(exist){
             return res.status(400).send({message: "User already exist"})
         }
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const user = await User.create({
+            fname,
+            email,
+            password: hashedPassword
+        })
+        return res.status(201).send({
+            user,
+            message: "User created successfully"
+        })
         
     } catch (error) {
         return res.status(500).send({message: error.message})
