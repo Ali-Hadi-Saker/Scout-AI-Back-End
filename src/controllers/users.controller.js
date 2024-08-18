@@ -13,7 +13,7 @@ export const createUser = async (req, res)=>{
         if(!fname || !email || !password){
             return res.status(400).send({message: "All field are required"})
         }
-        const exist = User.findOne({email})
+        const exist = await User.findOne({email})
         if(exist){
             return res.status(400).send({message: "User already exist"})
         }
