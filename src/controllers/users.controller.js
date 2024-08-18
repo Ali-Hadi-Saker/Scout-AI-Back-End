@@ -50,6 +50,13 @@ export const loginUser = async(req, res)=>{
         if(!isMatch){
             return res.status(400).send({error: "Invalid credentials"})
         }
+        const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
+        return res.status(200).send({
+            user,
+            token,
+            message: "success"
+        })
+
 
     } catch (error) {
         return res.status(500).send({message: error.message})
