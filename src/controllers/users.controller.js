@@ -1,11 +1,14 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcrypt"
 
-export const getUsers = async(res)=>{
-    const users = User.find()
-    return res.send(users)
-
-}
+export const getUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+        return res.status(200).send({ users })
+    } catch (error) {
+        return res.status(500).send({ message: error.message })
+    }
+};
 
 export const createUser = async (req, res)=>{
     try {
