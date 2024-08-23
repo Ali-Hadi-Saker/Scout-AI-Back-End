@@ -5,7 +5,13 @@ import usersRoutes from "./routes/users.routes.js"
 import cors from 'cors'
 const app = new express()
 dotenv.config();
-app.use(cors())
+const corsOptions = {
+    origin: '*', // Allow all origins (you might want to limit this in production)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json())
 
