@@ -30,3 +30,6 @@ const mockUser = new userModel({
         }
     ]
 });
+
+export const createMockUser = await mockUser.save();
+res.status(201).json({ message: 'Mock user created', user: savedUser });
