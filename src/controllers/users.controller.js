@@ -62,3 +62,15 @@ export const loginUser = async(req, res)=>{
         return res.status(500).send({message: error.message})
     }
 }
+
+export const updateUserName = async (req, res)=>{
+    try {
+        const {email} = req.body
+        const user = await User.findOne({email})
+        if(!user){
+            return res.status(400).send({message: "User not found"})
+        }
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+}

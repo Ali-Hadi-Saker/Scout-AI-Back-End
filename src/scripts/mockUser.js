@@ -10,7 +10,7 @@ const mockUser = new User({
     cars: [
         {
             carId: faker.string.uuid(),
-            status: faker.helpers.randomize(["active", "inactive"]),
+            status: "active",
             batteryLevel: faker.number.int({ min: 0, max: 100 }),
             cameraFeed: faker.internet.url(),
             location: {
