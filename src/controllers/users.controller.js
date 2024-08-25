@@ -65,11 +65,14 @@ export const loginUser = async(req, res)=>{
 
 export const updateUserName = async (req, res)=>{
     try {
-        const {email} = req.body
+        const {email, newUserfname} = req.body
         const user = await User.findOne({email})
         if(!user){
             return res.status(400).send({message: "User not found"})
         }
+        user.fname = newUserfname
+        await user.save()
+        return res.status(200).send({message: "User name updated successfully", newUserfname})
     } catch (error) {
         return res.status(500).send({message: error.message})
     }
