@@ -81,7 +81,7 @@ export const updateUserName = async (req, res)=>{
 export const deleteUser = async (req, res)=>{
     try {
         const {id} = req.params
-        const user = await User.findOneAndDelete(id)
+        const user = await User.findOneAndDelete({ _id: id })
         if(!user){
             return res.status(400).send({message: "User not found"})
         }
