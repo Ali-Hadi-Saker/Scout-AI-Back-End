@@ -20,13 +20,24 @@ export const initializedWebSocketServre = (server) =>{
             flutterSocket = ws
             console.log('Flutter connected !!');            
         }
-        
+
         if (ws === flutterSocket && esp32Socket) {
             esp32Socket.send(message);
         }
         if (ws === esp32Socket && flutterSocket) {
             flutterSocket.send(message);
         }
+        })
+        ws.on('close', ()=>{
+            if(ws === esp32Socket){
+                esp32Socket = null
+                console.log('Esp32 disconnected!!')
+            }
+            if(ws === flutterSocket){
+                flutterSocket = null
+                console.log('Flutter disconnected!!');
+                
+            }
         })
     })
 }
