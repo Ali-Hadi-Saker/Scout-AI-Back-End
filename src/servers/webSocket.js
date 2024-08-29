@@ -16,11 +16,16 @@ export const initializedWebSocketServre = (server) =>{
             esp32Socket = ws
             console.log('ESP32 connected !!');
             
-        }
-        if (message === 'FLUTTER_CONNECTED'){
+        }if (message === 'FLUTTER_CONNECTED'){
             flutterSocket = ws
-            console.log('Flutter connected !!');
-            
+            console.log('Flutter connected !!');            
+        }
+        
+        if (ws === flutterSocket && esp32Socket) {
+            esp32Socket.send(message);
+        }
+        if (ws === esp32Socket && flutterSocket) {
+            flutterSocket.send(message);
         }
         })
     })
