@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import connectToDatabase from './database/connection.js'
 import usersRoutes from "./routes/users.routes.js"
 import cors from 'cors'
-import { initializedWebSocketServre } from './servers/webSocket.js'
+import { initializedWebSocketServer } from './servers/webSocket.js'
 
 const app = new express()
 dotenv.config();
@@ -24,4 +24,4 @@ const server = app.listen(8080, ()=>{
     connectToDatabase()
 })
 
-initializedWebSocketServre(server)
+initializedWebSocketServer(server)
