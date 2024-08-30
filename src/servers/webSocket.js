@@ -8,9 +8,10 @@ export const initializedWebSocketServre = (server) =>{
     let flutterSocket = null
 
     wss.on('connection', (ws)=>{
-        ws.on('message', (message)=>{
+        console.log('New client connected');
 
-        consle.log(`Received ${message}`)
+        ws.on('message', (message)=>{
+        console.log(`Received ${message}`)
 
         if (message === 'ESP32_CONNECTED'){
             esp32Socket = ws
