@@ -7,7 +7,7 @@ export const initializedWebSocketServre = (server) =>{
     let esp32Socket = null
     let flutterSocket = null
 
-    wss.on('Connection', (ws)=>{
+    wss.on('connection', (ws)=>{
         ws.on('message', (message)=>{
 
         consle.log(`Received ${message}`)
