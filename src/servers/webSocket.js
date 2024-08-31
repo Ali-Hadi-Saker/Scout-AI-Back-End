@@ -13,39 +13,39 @@ export const initializedWebSocketServer = (server) => {
             let messageString = '';
 
             if (message instanceof Buffer) {
-                // If the message is a Buffer, convert it to a string
+                // Convert Buffer to string to check if it's a command
                 messageString = message.toString('utf8');
 
-                const commands = ['UP', 'LEFT', 'DOWN', 'RIGHT']
+                const commands = ['UP', 'LEFT', 'DOWN', 'RIGHT', 'STOP'];
 
-                if(commands.includes(messageString)) {
+                if (messageString === 'ESP32_CONNECTED') {
                     esp32Socket = ws;
-                    console.log(`Received command to car: ${messageString}`)
-                    esp32Socket.send(messageString)
-
-                }else {
-                    console.log(`Received video frame: ${message.length}`);
-                    flutterSocket = ws
-                    flutterSocket.send(message)
-
+                    console.log('ESP32 connected !!');
+                } else if (messageString === 'FLUTTER_CONNECTED') {
+                    flutterSocket = ws;
+                    console.log('Flutter connected !!');
                 }
+
+                if (commands.includes(messageString)) {
+                    // This is a command, so it should go to the ESP32
+                    if (esp32Socket) {
+                        console.log(`Forwarding command to ESP32: ${messageString}`);
+                        esp32Socket.send(messageString);
+                    } else {
+                        console.log('ESP32 is not connected to receive commands');
+                    }
+                } else {
+                    // Otherwise, it's binary data (likely a video frame), so send it to Flutter
+                    console.log(`Forwarding binary data to Flutter: ${message.length} bytes`);
+                    if (flutterSocket) {
+                        flutterSocket.send(message);
+                    } else {
+                        console.log('Flutter is not connected to receive video data');
+                    }
+                }
+
+                
             } 
-            // else if (typeof message === 'string') {
-            //     messageString = message;
-            //     console.log(`Received text: ${messageString}`);
-            //     if(esp32Socket){
-            //         esp32Socket.send(message)
-            //     }
-    
-            // }
-            
-            if (messageString === 'ESP32_CONNECTED') {
-                console.log('ESP32 connected !!');
-
-            } else if (messageString === 'FLUTTER_CONNECTED') {
-                console.log('Flutter connected !!');
-            }
-
         });
 
         ws.on('close', () => {
