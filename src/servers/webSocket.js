@@ -15,7 +15,7 @@ export const initializedWebSocketServer = (server) => {
             if (message instanceof Buffer) {
                 // If the message is a Buffer, convert it to a string
                 messageString = message.toString('utf8');
-                console.log(`Received text: ${message.length}`);
+                console.log(`Received binary: ${message.length}`);
                 if(flutterSocket){
                     flutterSocket.send(message)
                 }
