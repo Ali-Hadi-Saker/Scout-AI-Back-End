@@ -10,24 +10,24 @@ export const initializedWebSocketServer = (server) => {
         console.log('New client connected');
 
         ws.on('message', (message) => {
-            console.log(message);
-
             let messageString = '';
 
             if (message instanceof Buffer) {
                 // If the message is a Buffer, convert it to a string
                 messageString = message.toString('utf8');
-                console.log(`Received binary: ${message.length}`);
-
-                if(flutterSocket){
-                    flutterSocket.send(message)
-                }
 
                 const commands = ['UP', 'LEFT', 'DOWN', 'RIGHT']
-                if(commands.includes(messageString)){
-                esp32Socket = ws;
-                console.log(`Received binary to string: ${messageString}`)
-                esp32Socket.send(messageString)
+
+                if(commands.includes(messageString)) {
+                    esp32Socket = ws;
+                    console.log(`Received command to car: ${messageString}`)
+                    esp32Socket.send(messageString)
+
+                }else {
+                    console.log(`Received video frame: ${message.length}`);
+                    flutterSocket = ws
+                    flutterSocket.send(message)
+
                 }
             } 
             // else if (typeof message === 'string') {
@@ -40,11 +40,9 @@ export const initializedWebSocketServer = (server) => {
             // }
             
             if (messageString === 'ESP32_CONNECTED') {
-                esp32Socket = ws;
                 console.log('ESP32 connected !!');
 
             } else if (messageString === 'FLUTTER_CONNECTED') {
-                flutterSocket = ws;
                 console.log('Flutter connected !!');
             }
 
