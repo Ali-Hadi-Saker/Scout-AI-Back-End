@@ -10,15 +10,15 @@ export const initializedWebSocketServer = (server) => {
         console.log('New client connected');
 
         ws.on('message', (message) => {
-            if (message instanceof Buffer) {
-                // Handle binary data (e.g., video frames)
-                console.log('Received binary data of length:', message.length);
-                if (flutterSocket) {
-                    flutterSocket.send(message);
-                }
-            } else {
-                // Handle text messages
-                console.log(`Received text: ${message}`);
+            // if (message instanceof Buffer) {
+            //     // Handle binary data (e.g., video frames)
+            //     console.log('Received binary data of length:', message.length);
+            //     if (flutterSocket) {
+            //         flutterSocket.send(message);
+            //     }
+            // } else {
+            //     // Handle text messages
+            //     console.log(`Received text: ${message}`);
                 if (message === 'ESP32_CONNECTED') {
                     esp32Socket = ws;
                     console.log('ESP32 connected !!');
@@ -33,7 +33,7 @@ export const initializedWebSocketServer = (server) => {
                 if (ws === esp32Socket && flutterSocket) {
                     flutterSocket.send(message);
                 }
-            }
+            
         });
 
         ws.on('close', () => {
