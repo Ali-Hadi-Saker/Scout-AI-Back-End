@@ -15,12 +15,20 @@ export const initializedWebSocketServer = (server) => {
             if (message instanceof Buffer) {
                 // If the message is a Buffer, convert it to a string
                 messageString = message.toString('utf8');
+                console.log(`Received text: ${message.length}`);
+                if(flutterSocket){
+                    flutterSocket.send(message)
+                }
+
             } else if (typeof message === 'string') {
                 // If the message is already a string, use it directly
                 messageString = message;
+                console.log(`Received text: ${messageString}`);
+                if(esp32Socket){
+                    esp32Socket.send(message)
+                }
+    
             }
-
-            console.log(`Received text: ${messageString}`);
             
             if (messageString === 'ESP32_CONNECTED') {
                 esp32Socket = ws;
@@ -31,12 +39,6 @@ export const initializedWebSocketServer = (server) => {
                 console.log('Flutter connected !!');
             }
 
-            if (ws === flutterSocket && esp32Socket) {
-                esp32Socket.send(messageString);
-            }
-            if (ws === esp32Socket && flutterSocket) {
-                flutterSocket.send(messageString);
-            }
         });
 
         ws.on('close', () => {
