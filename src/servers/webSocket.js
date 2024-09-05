@@ -46,6 +46,9 @@ export const initializedWebSocketServer = (server) => {
                     } else {
                         console.log('Flutter is not connected to receive video data');
                     }
+                    detectionSocket.on('message', (processedFrame) => {
+                        
+                    });
                 }
 
                 
