@@ -9,16 +9,22 @@ export const initializedWebSocketServer = (server) => {
 
     wss.on('connection', (ws) => {
         console.log('New client connected');
-
-        ws.on('message', (message) => {
-            let messageString = '';
-
-            if (message instanceof Buffer) {
-                // Convert Buffer to string to check if it's a command
-                messageString = message.toString('utf8');
-
+    
+        ws.on('message', (message, isBinary) => {
+            if (isBinary) {
+                console.log(`Received binary message of length: ${message.length} bytes`);
+    
+                // Handle the binary message here (for example, forward it to the detection server)
+                if (detectionSocket) {
+                    detectionSocket.send(message);
+                } else {
+                    console.log('Detection server is not connected to receive video data');
+                }
+            } else {
+                // Convert message to string and process commands
+                const messageString = message.toString('utf8');
                 const commands = ['UP', 'LEFT', 'DOWN', 'RIGHT', 'STOP'];
-
+    
                 if (messageString === 'ESP32_CONNECTED') {
                     esp32Socket = ws;
                     console.log('ESP32 connected !!');
@@ -29,41 +35,31 @@ export const initializedWebSocketServer = (server) => {
                     detectionSocket = ws;
                     console.log('Object detection server connected !!');
                 }
-
+    
                 if (commands.includes(messageString)) {
-                    // This is a command, so it should go to the ESP32
                     if (esp32Socket) {
-                        console.log(`Forwarding command to ESP32: ${messageString}`);
                         esp32Socket.send(messageString);
                     } else {
                         console.log('ESP32 is not connected to receive commands');
                     }
-                } else {
-                    // Otherwise, it's binary data (likely a video frame), so send it to Flutter
-                    console.log(`Forwarding binary data to detection server: ${message.length} bytes`);
-                    if (detectionSocket) {
-                        detectionSocket.send(message);
-                    } else {
-                        console.log('detection server is not connected to receive video data');
-                    }                    
                 }
-
-                
-            } 
+            }
         });
-
-        if (ws == detectionSocket){
-            detectionSocket.on('message', (processedFrame) => {
-                // Forward processed frames to Flutter
-                if (flutterSocket) {
-                    console.log(`Forwarding processed data to Flutter: ${processedFrame.length} bytes`);
-                    flutterSocket.send(processedFrame);
-                } else {
-                    console.log('Flutter is not connected to receive processed video');
+    
+        if (ws == detectionSocket) {
+            detectionSocket.on('message', (processedFrame, isBinary) => {
+                if (isBinary) {
+                    // Forward processed frames to Flutter
+                    if (flutterSocket) {
+                        console.log(`Forwarding processed data to Flutter: ${processedFrame.length} bytes`);
+                        flutterSocket.send(processedFrame);
+                    } else {
+                        console.log('Flutter is not connected to receive processed video');
+                    }
                 }
             });
         }
-
+    
         ws.on('close', () => {
             if (ws === esp32Socket) {
                 esp32Socket = null;
@@ -73,6 +69,14 @@ export const initializedWebSocketServer = (server) => {
                 flutterSocket = null;
                 console.log('Flutter disconnected!!');
             }
+            if (ws === detectionSocket) {
+                detectionSocket = null;
+                console.log('Detection server disconnected!!');
+            }
+        });
+    
+        ws.on('error', (error) => {
+            console.log(`WebSocket error: ${error.message}`);
         });
     });
-};
+}    
