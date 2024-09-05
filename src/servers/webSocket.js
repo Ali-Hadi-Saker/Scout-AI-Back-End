@@ -41,8 +41,8 @@ export const initializedWebSocketServer = (server) => {
                 } else {
                     // Otherwise, it's binary data (likely a video frame), so send it to Flutter
                     console.log(`Forwarding binary data to Flutter: ${message.length} bytes`);
-                    if (flutterSocket) {
-                        flutterSocket.send(message);
+                    if (detectionSocket) {
+                        detectionSocket.send(message);
                     } else {
                         console.log('Flutter is not connected to receive video data');
                     }
