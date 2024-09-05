@@ -51,7 +51,9 @@ export const initializedWebSocketServer = (server) => {
                         if (flutterSocket) {
                             console.log(`Forwarding processed data to Flutter: ${processedFrame.length} bytes`);
                             flutterSocket.send(processedFrame);
-                        } 
+                        } else {
+                            console.log('Flutter is not connected to receive processed video');
+                        }
                     });
                 }
 
