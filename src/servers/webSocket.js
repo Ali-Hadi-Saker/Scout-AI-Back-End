@@ -40,26 +40,29 @@ export const initializedWebSocketServer = (server) => {
                     }
                 } else {
                     // Otherwise, it's binary data (likely a video frame), so send it to Flutter
-                    console.log(`Forwarding binary data to Flutter: ${message.length} bytes`);
+                    console.log(`Forwarding binary data to detection server: ${message.length} bytes`);
                     if (detectionSocket) {
                         detectionSocket.send(message);
                     } else {
-                        console.log('Flutter is not connected to receive video data');
-                    }
-                    detectionSocket.on('message', (processedFrame) => {
-                        // Forward processed frames to Flutter
-                        if (flutterSocket) {
-                            console.log(`Forwarding processed data to Flutter: ${processedFrame.length} bytes`);
-                            flutterSocket.send(processedFrame);
-                        } else {
-                            console.log('Flutter is not connected to receive processed video');
-                        }
-                    });
+                        console.log('detection server is not connected to receive video data');
+                    }                    
                 }
 
                 
             } 
         });
+
+        if (ws == detectionSocket){
+            detectionSocket.on('message', (processedFrame) => {
+                // Forward processed frames to Flutter
+                if (flutterSocket) {
+                    console.log(`Forwarding processed data to Flutter: ${processedFrame.length} bytes`);
+                    flutterSocket.send(processedFrame);
+                } else {
+                    console.log('Flutter is not connected to receive processed video');
+                }
+            });
+        }
 
         ws.on('close', () => {
             if (ws === esp32Socket) {
