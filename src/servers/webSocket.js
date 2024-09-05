@@ -5,6 +5,7 @@ export const initializedWebSocketServer = (server) => {
 
     let esp32Socket = null;
     let flutterSocket = null;
+    let detectionSocket = null;
 
     wss.on('connection', (ws) => {
         console.log('New client connected');
@@ -24,6 +25,9 @@ export const initializedWebSocketServer = (server) => {
                 } else if (messageString === 'FLUTTER_CONNECTED') {
                     flutterSocket = ws;
                     console.log('Flutter connected !!');
+                } else if (messageString === 'DETECTION_CONNECTED') {
+                    detectionSocket = ws;
+                    console.log('Object detection server connected !!');
                 }
 
                 if (commands.includes(messageString)) {
