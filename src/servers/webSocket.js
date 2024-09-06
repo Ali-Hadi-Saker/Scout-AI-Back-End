@@ -16,6 +16,7 @@ export const initializedWebSocketServer = (server) => {
                 console.log(`Received binary message of length: ${message.length} bytes`);
 
                 if (ws === detectionSocket) {
+                    console.log('Binary data received from detection server.');
                     // This is processed frame data from the detection server, forward to Flutter
                     if (flutterSocket) {
                         console.log('Forwarding processed video data to Flutter');
