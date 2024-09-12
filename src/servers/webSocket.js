@@ -28,8 +28,9 @@ export const initializedWebSocketServer = (server) => {
                     // Forward binary video frame to the detection server
                     console.log('Forwarding binary data to detection server');
                     detectionSocket.send(message);
-                } else {
+                } else if(flutterSocket) {
                     console.log('Detection server is not connected to receive video data');
+                    flutterSocket.send(message);
                 }
             } else {
                 // Handle text messages (commands and connection identifiers)
@@ -79,3 +80,4 @@ export const initializedWebSocketServer = (server) => {
         });
     });
 };
+
