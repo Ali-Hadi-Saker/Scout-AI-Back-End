@@ -15,22 +15,23 @@ export const initializedWebSocketServer = (server) => {
                 // Handle binary messages (likely video frames)
                 console.log(`Received binary message of length: ${message.length} bytes`);
 
-                if (ws === detectionSocket) {
-                    console.log('Binary data received from detection server.');
+                if (ws === esp32Socket) {
+                    console.log('Binary data received from esp32 camera.');
                     // This is processed frame data from the detection server, forward to Flutter
                     if (flutterSocket) {
                         console.log('Forwarding processed video data to Flutter');
+                        console.log(message)
                         flutterSocket.send(message);
                     } else {
                         console.log('Flutter is not connected to receive processed video');
                     }
-                } else if (detectionSocket) {
+                } if (detectionSocket) {
                     // Forward binary video frame to the detection server
                     console.log('Forwarding binary data to detection server');
                     detectionSocket.send(message);
                 } else if(flutterSocket) {
                     console.log('Detection server is not connected to receive video data');
-                    flutterSocket.send(message);
+                    // flutterSocket.send(message);
                 }
             } else {
                 // Handle text messages (commands and connection identifiers)
