@@ -6,6 +6,9 @@ export const initializedWebSocketServer = (server) => {
     let esp32Socket = null;
     let flutterSocket = null;
     let detectionSocket = null;
+    let lastFrame = null; // Variable to store the last received frame
+    let detectionInterval = null; // Timer for sending frames to the detection server
+
 
     wss.on('connection', (ws) => {
         console.log('New client connected');
