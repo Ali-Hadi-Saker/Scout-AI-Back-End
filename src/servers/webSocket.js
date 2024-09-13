@@ -9,7 +9,6 @@ export const initializedWebSocketServer = (server) => {
     let lastFrame = null; // Variable to store the last received frame
     let detectionInterval = null; // Timer for sending frames to the detection server
 
-
     wss.on('connection', (ws) => {
         console.log('New client connected');
 
@@ -20,38 +19,31 @@ export const initializedWebSocketServer = (server) => {
 
                 if (ws === esp32Socket) {
                     console.log('Binary data received from esp32 camera.');
-                    // This is processed frame data from the detection server, forward to Flutter
+                    lastFrame = message; // Store the last received frame
+
+                    // Forward frame to Flutter if connected
                     if (flutterSocket) {
-                        lastFrame = message; // Store the last received frame
                         console.log('Forwarding processed video data to Flutter');
                         flutterSocket.send(message);
-                        if (!detectionInterval) {
+                    } else {
+                        console.log('Flutter is not connected to receive processed video');
+                    }
+
+                    // Start sending frames to the detection server if not already started
+                    if (!detectionInterval && detectionSocket) {
                         detectionInterval = setInterval(() => {
-                            if (lastFrame && detectionSocket) {
+                            if (lastFrame) {
                                 console.log('Sending frame to detection server');
                                 detectionSocket.send(lastFrame);
                             }
                         }, 2000);
                     }
-                 } else {
-                        console.log('Flutter is not connected to receive processed video');
-                    }
-                } if (ws === detectionSocket) {
-                    ws.on('message', (message, isBinary) => {
-                        if (flutterSocket && isBinary) {
-                            // Forward detection results to Flutter
-                            const msgString = message.toString('utf8');
-                            console.log(`Received text message: ${msgString}`);
-                            console.log('Forwarding detection results to Flutter');
-                            flutterSocket.send(message);
-                        }
-                    });
                 }
             } else {
                 // Handle text messages (commands and connection identifiers)
                 const messageString = message.toString('utf8');
                 console.log(`Received text message: ${messageString}`);
-                
+
                 const commands = ['UP', 'LEFT', 'DOWN', 'RIGHT', 'STOP'];
 
                 if (messageString === 'ESP32_CONNECTED') {
@@ -63,6 +55,29 @@ export const initializedWebSocketServer = (server) => {
                 } else if (messageString === 'DETECTION_CONNECTED') {
                     detectionSocket = ws;
                     console.log('Object detection server connected !!');
+
+                    // Set up detection message handling
+                    ws.on('message', (message) => {
+                        const msgString = message.toString('utf8');
+                        console.log(`Received detection result: ${msgString}`);
+
+                        try {
+                            // Attempt to parse the detection server's response
+                            const detectionResult = JSON.parse(msgString);
+                            
+                            // Forward detection results to Flutter if connected
+                            if (flutterSocket) {
+                                console.log('Forwarding detection results to Flutter');
+                                flutterSocket.send(JSON.stringify(detectionResult));
+                            } else {
+                                console.log('Flutter is not connected to receive detection results');
+                            }
+                        } catch (error) {
+                            // Log error and exact message for debugging
+                            console.log(`Error parsing detection server response: ${error.message}`);
+                            console.log(`Raw response from detection server: ${msgString}`);
+                        }
+                    });
                 } else if (commands.includes(messageString)) {
                     // Forward command to the ESP32
                     if (esp32Socket) {
@@ -73,7 +88,6 @@ export const initializedWebSocketServer = (server) => {
                     }
                 }
             }
-            
         });
 
         ws.on('close', () => {
@@ -88,6 +102,12 @@ export const initializedWebSocketServer = (server) => {
             if (ws === detectionSocket) {
                 detectionSocket = null;
                 console.log('Detection server disconnected!!');
+                
+                // Stop sending frames if the detection server disconnects
+                if (detectionInterval) {
+                    clearInterval(detectionInterval);
+                    detectionInterval = null;
+                }
             }
         });
 
@@ -96,4 +116,3 @@ export const initializedWebSocketServer = (server) => {
         });
     });
 };
-
