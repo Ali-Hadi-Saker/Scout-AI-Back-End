@@ -24,7 +24,6 @@ export const initializedWebSocketServer = (server) => {
                     if (flutterSocket) {
                         lastFrame = message; // Store the last received frame
                         console.log('Forwarding processed video data to Flutter');
-                        console.log(message)
                         flutterSocket.send(message);
                         if (!detectionInterval) {
                         detectionInterval = setInterval(() => {
@@ -37,13 +36,16 @@ export const initializedWebSocketServer = (server) => {
                  } else {
                         console.log('Flutter is not connected to receive processed video');
                     }
-                } if (detectionSocket) {
-                    // Forward binary video frame to the detection server
-                    console.log('Forwarding binary data to detection server');
-                    detectionSocket.send(message);
-                } else if(flutterSocket) {
-                    console.log('Detection server is not connected to receive video data');
-                    // flutterSocket.send(message);
+                } if (ws === detectionSocket) {
+                    ws.on('message', (message, isBinary) => {
+                        if (flutterSocket && isBinary) {
+                            // Forward detection results to Flutter
+                            const msgString = message.toString('utf8');
+                            console.log(`Received text message: ${msgString}`);
+                            console.log('Forwarding detection results to Flutter');
+                            flutterSocket.send(message);
+                        }
+                    });
                 }
             } else {
                 // Handle text messages (commands and connection identifiers)
@@ -71,16 +73,7 @@ export const initializedWebSocketServer = (server) => {
                     }
                 }
             }
-            if (ws === detectionSocket) {
-            ws.on('message', (message, isBinary) => {
-                if (flutterSocket && isBinary) {
-                    // Forward detection results to Flutter
-                    console.log('Forwarding detection results to Flutter');
-                    console.log(message);
-                    flutterSocket.send(message);
-                }
-            });
-        }
+            
         });
 
         ws.on('close', () => {
