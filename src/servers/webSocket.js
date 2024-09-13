@@ -59,16 +59,12 @@ export const initializedWebSocketServer = (server) => {
                     // Set up detection message handling
                     ws.on('message', (message) => {
                         const msgString = message.toString('utf8');
-                        console.log(`Received detection result: ${msgString}`);
-
-                        try {
-                            // Attempt to parse the detection server's response
-                            const detectionResult = JSON.parse(msgString);
-                            
+                        try {                         
                             // Forward detection results to Flutter if connected
                             if (flutterSocket) {
-                                console.log('Forwarding detection results to Flutter');
-                                flutterSocket.send(JSON.stringify(detectionResult));
+                                flutterSocket.send(msgString);
+                                console.log(`Forwarding detection results to Flutter ${msgString}`);
+
                             } else {
                                 console.log('Flutter is not connected to receive detection results');
                             }
