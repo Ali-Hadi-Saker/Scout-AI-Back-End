@@ -22,6 +22,7 @@ export const initializedWebSocketServer = (server) => {
                     console.log('Binary data received from esp32 camera.');
                     // This is processed frame data from the detection server, forward to Flutter
                     if (flutterSocket) {
+                        lastFrame = message; // Store the last received frame
                         console.log('Forwarding processed video data to Flutter');
                         console.log(message)
                         flutterSocket.send(message);
