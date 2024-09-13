@@ -71,6 +71,16 @@ export const initializedWebSocketServer = (server) => {
                     }
                 }
             }
+            if (ws === detectionSocket) {
+            ws.on('message', (message, isBinary) => {
+                if (flutterSocket && isBinary) {
+                    // Forward detection results to Flutter
+                    console.log('Forwarding detection results to Flutter');
+                    console.log(message);
+                    flutterSocket.send(message);
+                }
+            });
+        }
         });
 
         ws.on('close', () => {
