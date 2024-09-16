@@ -95,7 +95,15 @@ export const deleteUser = async (req, res)=>{
 
 export const logout = async (req, res) => {
     try {
-        
+        const {id} = req.params
+        const user = await User.findById(id)
+        if(!user){
+            return res.status(400).send({message: "User not found"})
+        }
+        user.status = 'offline'
+        await user.save()
+        return res.status(200).send({message: "User logged out"})
+
     } catch (error) {
         return res.status(500).send({message: error.message})
     }
