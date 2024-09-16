@@ -19,6 +19,11 @@ const userSchema = new Schema({
         enum: ["user", "admin"],
         default: "user"
     },
+    status:{
+        type: String,
+        enum: ["online", "offline"],
+        default: "offline"
+    },
     profilePicture: {
         type: String
     },
