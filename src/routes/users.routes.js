@@ -4,7 +4,7 @@ import { createUser, deleteUser, getUsers, loginUser, logoutUser, updateUserName
 const router = new Router()
 
 router.get("/", getUsers)
-router.get("/logout", logoutUser)
+router.get("/logout/:id", logoutUser)
 router.post("/register", createUser )
 router.post("/login", loginUser )
 router.post("/updateName", updateUserName)
