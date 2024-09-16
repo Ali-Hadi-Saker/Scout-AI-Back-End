@@ -92,3 +92,11 @@ export const deleteUser = async (req, res)=>{
         return res.status(500).send({message: error.message})
     }
 }
+
+export const logout = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+}
