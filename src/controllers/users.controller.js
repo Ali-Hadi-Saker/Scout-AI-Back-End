@@ -93,7 +93,7 @@ export const deleteUser = async (req, res)=>{
     }
 }
 
-export const logout = async (req, res) => {
+export const logoutUser = async (req, res) => {
     try {
         const {id} = req.params
         const user = await User.findById(id)
