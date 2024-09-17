@@ -110,9 +110,9 @@ export const logoutUser = async (req, res) => {
 }
 export const changUserPassword = async(req, res) => {
     try {
-        const {email, oldPassword, newPassword} = req.body
+        const { email, oldPassword, newPassword } = req.body;
 
-        if(!email || !oldPassword || newPassword ){
+        if(!email || !oldPassword || !newPassword ){
             return res.status(400).send({message: "All fields are required"})
         }
         const user = await User.findOne({ email });
