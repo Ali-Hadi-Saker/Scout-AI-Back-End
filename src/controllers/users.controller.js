@@ -1,5 +1,5 @@
 import User from "../models/user.model.js"
-import bcrypt from "bcrypt"
+import bcrypt, { hash } from "bcrypt"
 import jwt from "jsonwebtoken"
 
 export const getUsers = async (req, res) => {
@@ -124,6 +124,11 @@ export const changUserPassword = async(req, res) => {
         if(!isMatch){
             return res.status(400).send({error: "Invalid credentials"})
         }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+        user.password = hashedPassword
+        await user.save()
+        return res.status(200).send({ message: "Password updated successfully" })
     } catch (error) {
         return res.status(500).send({message: error.message})
     }
