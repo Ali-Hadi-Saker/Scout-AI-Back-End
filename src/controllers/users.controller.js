@@ -110,7 +110,20 @@ export const logoutUser = async (req, res) => {
 }
 export const changUserPassword = async(req, res) => {
     try {
-        
+        const {email, oldPassword, newPassword} = req.body
+
+        if(!email || !oldPassword || newPassword ){
+            return res.status(400).send({message: "All fields are required"})
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password)
+        if(!isMatch){
+            return res.status(400).send({error: "Invalid credentials"})
+        }
     } catch (error) {
         return res.status(500).send({message: error.message})
     }
