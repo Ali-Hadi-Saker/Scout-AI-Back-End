@@ -108,3 +108,10 @@ export const logoutUser = async (req, res) => {
         return res.status(500).send({message: error.message})
     }
 }
+export const changUserPassword = async(req, res) => {
+    try {
+        
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+}
